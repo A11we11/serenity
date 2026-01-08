@@ -1,0 +1,169 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String   @id @default(uuid())
+  email         String   @unique
+  password      String
+  role          Role     @default(PATIENT)
+  firstName     String
+  lastName      String
+  phone         String?
+  language      String   @default("en")
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  // Relations
+  patientProfile  Patient?
+  doctorProfile   Doctor?
+  notifications   Notification[]
+}
+
+enum Role {
+  PATIENT
+  DOCTOR
+  ADMIN
+}
+
+model Patient {
+  id              String   @id @default(uuid())
+  userId          String   @unique
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  dateOfBirth     DateTime
+  gender          String?
+  address         String?
+  medicalHistory  String?
+  
+  consultations   Consultation[]
+  intakeForms     IntakeForm[]
+}
+
+model Doctor {
+  id              String   @id @default(uuid())
+  userId          String   @unique
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  specialization  String
+  licenseNumber   String   @unique
+  bio             String?
+  availability    Json?    // Store available time slots
+  
+  consultations   Consultation[]
+}
+
+model Consultation {
+  id              String            @id @default(uuid())
+  patientId       String
+  patient         Patient           @relation(fields: [patientId], references: [id])
+  doctorId        String?
+  doctor          Doctor?           @relation(fields: [doctorId], references: [id])
+  status          ConsultationStatus @default(PENDING)
+  chiefComplaint  String
+  intakeFormId    String?           @unique
+  intakeForm      IntakeForm?       @relation(fields: [intakeFormId], references: [id])
+  
+  // Async video
+  patientVideoUrl String?
+  doctorVideoUrl  String?
+  
+  diagnosis       String?
+  prescription    String?
+  notes           String?
+  
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+  
+  messages        Message[]
+  followUps       FollowUp[]
+  photoComparisons PhotoComparison[]
+}
+
+enum ConsultationStatus {
+  PENDING
+  IN_PROGRESS
+  AWAITING_PATIENT
+  COMPLETED
+  CANCELLED
+}
+
+model IntakeForm {
+  id                String   @id @default(uuid())
+  patientId         String
+  patient           Patient  @relation(fields: [patientId], references: [id])
+  
+  // Smart intake fields (JSON for flexibility)
+  symptoms          Json
+  duration          String
+  severity          Int      // 1-10
+  previousTreatment String?
+  allergies         String?
+  currentMedications String?
+  photoUrls         String[] // Array of photo URLs
+  
+  createdAt         DateTime @default(now())
+  
+  consultation      Consultation?
+}
+
+model Message {
+  id              String       @id @default(uuid())
+  consultationId  String
+  consultation    Consultation @relation(fields: [consultationId], references: [id], onDelete: Cascade)
+  senderId        String
+  content         String
+  videoUrl        String?
+  createdAt       DateTime     @default(now())
+  readAt          DateTime?
+}
+
+model FollowUp {
+  id              String       @id @default(uuid())
+  consultationId  String
+  consultation    Consultation @relation(fields: [consultationId], references: [id])
+  scheduledFor    DateTime
+  status          FollowUpStatus @default(SCHEDULED)
+  notes           String?
+  createdAt       DateTime     @default(now())
+}
+
+enum FollowUpStatus {
+  SCHEDULED
+  COMPLETED
+  MISSED
+  CANCELLED
+}
+
+model PhotoComparison {
+  id              String       @id @default(uuid())
+  consultationId  String
+  consultation    Consultation @relation(fields: [consultationId], references: [id])
+  beforePhotoUrl  String
+  afterPhotoUrl   String?
+  date            DateTime     @default(now())
+  notes           String?
+}
+
+model Notification {
+  id         String           @id @default(uuid())
+  userId     String
+  user       User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type       NotificationType
+  title      String
+  message    String
+  channel    String[]         // ["EMAIL", "SMS", "WHATSAPP"]
+  sent       Boolean          @default(false)
+  sentAt     DateTime?
+  createdAt  DateTime         @default(now())
+}
+
+enum NotificationType {
+  APPOINTMENT_CONFIRMATION
+  DOCTOR_REPLY
+  FOLLOW_UP_REMINDER
+  CONSULTATION_UPDATE
+}
