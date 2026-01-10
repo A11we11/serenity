@@ -1,7 +1,7 @@
 // src/pages/patient/consultation-detail-page.tsx
 import { useParams } from "react-router-dom";
-import { useConsultation } from "../../features/consultations/hooks/useConsultation";
-import { ConsultationDetail } from "../../features/consultations/components/ConsultationDetail";
+import { useConsultation } from "@/features/consultations/hooks/useConsultation";
+import { ConsultationDetail } from "@/features/consultations/components/ConsultationDetail";
 import { Loader2 } from "lucide-react";
 
 export function ConsultationDetailPage() {

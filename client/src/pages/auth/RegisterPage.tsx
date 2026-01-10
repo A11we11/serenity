@@ -8,7 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useTranslation } from "react-i18next";
 import { Loader2 } from "lucide-react";
 
-export function LoginPage() {
+export function RegisterPage() {
   const { t } = useTranslation();
   const { login, isLoggingIn, loginError } = useAuth();
   const [credentials, setCredentials] = useState({

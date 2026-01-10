@@ -1,10 +1,10 @@
 import { Link } from "react-router-dom";
 import { useAuthStore } from "../../store/index";
-import { ThemeToggle } from "../ui/ThemeToggle";
-import { LanguageSwitcher } from "../ui/LanguageSwitcher";
+import { ThemeToggle } from "@/components/ThemeToggle";
+import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { Button } from "@/components/ui/button";
 import { LogOut, Menu } from "lucide-react";
-import { OfflineIndicator } from "../OfflineIndicator";
+import { OfflineIndicator } from "@/components/OfflineIndicator";
 import { useTranslation } from "react-i18next";
 
 interface HeaderProps {

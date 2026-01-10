@@ -1,5 +1,5 @@
-import { IntakeForm } from "../../features/consultations/components/IntakeForm";
-import { useConsultations } from "../../features/consultations/hooks/useConsultation";
+import { IntakeForm } from "@/features/consultations/components/IntakeForm";
+import { useConsultations } from "@/features/consultations/hooks/useConsultation";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 

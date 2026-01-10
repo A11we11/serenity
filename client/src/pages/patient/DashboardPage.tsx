@@ -1,4 +1,4 @@
-import { useConsultations } from "../../features/consultations/hooks/useConsultation";
+import { useConsultations } from "@/features/consultations/hooks/useConsultation";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useTranslation } from "react-i18next";
